@@ -5,9 +5,10 @@
 
 ## **Introduction**
 ```
-The Spacecraft Travel Project aims to calculate the route of a travel between planets, taking into account
-the maximum travel capacity of the spacecraft, in addition to its tribulation capacity. The purpose here,
-is also aims to practice OO language concepts, using C# and Graphical Framework.
+The Spacecraft Travel Project aims to calculate the route of a travel between planets, taking
+into account the maximum travel capacity of the spacecraft, in addition to its tribulation
+capacity. The purpose here, is also aims to practice OO language concepts, using C# and Graphical
+Framework.
 ```
 ------------
 
@@ -19,7 +20,7 @@ The Main Screen presents all the option buttons that the user can use. By defaul
 ------------
 
 #### **Capacity**
-Each Spacecraft has its own capability. Therefore, the number of passengers dropbox varies according to the chosen spaceship.
+Each Spacecraft has its own capability. Therefore, the number of passengers dropbox varies according to the chosen Spacecraft.
 
 <img src="https://github.com/iagohribeiro/spacecraftTravel/blob/master/isarAssignment/doc/capacity.PNG" width="500">
 
