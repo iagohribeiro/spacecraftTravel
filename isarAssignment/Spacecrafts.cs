@@ -22,12 +22,12 @@ namespace isarAssignment
         public Boolean GravityGenerator { get; set; }
 
         [JsonProperty(PropertyName = "maxTravelDistance")]
-        public long MaxTravelDistance { get; set; }
+        public double MaxTravelDistance { get; set; }
 
         [JsonProperty(PropertyName = "asteroidDeflector")]
         public Boolean AsteroidDeflector { get; set; }
 
-        public Spacecrafts (string name, string type, int capacity, bool gravityGenerator, long maxTravelDistance, bool asteroidDeflector)
+        public Spacecrafts (string name, string type, int capacity, bool gravityGenerator, double maxTravelDistance, bool asteroidDeflector)
         {
             Name = name;
             Type = type;

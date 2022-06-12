@@ -18,6 +18,10 @@ namespace isarAssignment
     public partial class s : Form
     {
         private JsonData data;
+        private double maxDistanceSupported = 0;
+        private double availableDistance = 0;
+        private Planet lastItemSelected = null;
+        private int lastTemperatureSignal = 0;
         public s()
         {
             InitializeComponent();
@@ -28,13 +32,14 @@ namespace isarAssignment
             capacity_ComboBox.Enabled = false;
             destination_comboBox.Enabled = false;
             destination_listBox.Enabled = false;
-            route_listBox.Enabled = false;
+            route_textBox.Enabled = false;
             createRoute_button.Enabled = false;
             save_route_button.Enabled = false;
-
+            route_textBox.ReadOnly = true;
+            route_textBox.BackColor = Color.White;
             spacecraft_ComboBox.Text = "Please Select a SpaceCraft";
 
-            //using the full path for testing purpose. It will be change in the final version.
+            //using the full path for testing purpose. It will be changed in the final version.
             using (StreamReader r = new StreamReader("C:\\Users\\Iagoh Ribeiro Lima\\Downloads\\DotNetAssignment\\data.json"))
             {
                 string json = r.ReadToEnd();
@@ -51,14 +56,6 @@ namespace isarAssignment
                     spacecraft_ComboBox.Items.Add(item.Name);
                 }
             }
-
-            foreach (Planet item in data.Planet)
-            {
-                if (item.Name != null)
-                {
-                    destination_comboBox.Items.Add(item.Name);
-                }
-            }
         }
 
         private void spacecraft_ComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -70,7 +67,7 @@ namespace isarAssignment
                 capacity_ComboBox.Enabled = false;
                 destination_comboBox.Enabled = false;
                 destination_listBox.Enabled = false;
-                route_listBox.Enabled = false;
+                route_textBox.Enabled = false;
                 createRoute_button.Enabled = false;
                 save_route_button.Enabled = false;
                 capacity_ComboBox.Text = "";
@@ -90,6 +87,7 @@ namespace isarAssignment
                 }
 
                 capacity_ComboBox.Items.Clear();
+                destination_listBox.Items.Clear();
                 capacity_ComboBox.Text = "";
                 capacity_ComboBox.Enabled = true;
                 for (int index = 0; index < capacity; index++)
@@ -97,27 +95,234 @@ namespace isarAssignment
                     capacity_ComboBox.Items.Add(index + 1);
                 }
             }
+
         }
 
         private void capacity_ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             destination_comboBox.Enabled = true;
             destination_listBox.Enabled = true;
-            route_listBox.Enabled = true;
+            route_textBox.Enabled = true;
             createRoute_button.Enabled = true;
             save_route_button.Enabled = true;
+
+            foreach (Spacecrafts item in data.Spacecrafts)
+            {
+                if (item.Name != null && spacecraft_ComboBox.SelectedItem != null)
+                {
+                    if (spacecraft_ComboBox.SelectedItem.ToString() == item.Name)
+                    {
+                        maxDistanceSupported = item.MaxTravelDistance * (1 - (0.3 / (float)item.Capacity) * (float)int.Parse(capacity_ComboBox.SelectedItem.ToString()));
+                        break;
+                    }
+                }
+            }
+            availableDistance = maxDistanceSupported;
+
+            destination_comboBox.Items.Clear();
+            destination_listBox.Items.Clear();
+            route_textBox.Clear();
+
+            foreach (Planet item in data.Planet)
+            {
+                if (item.Name != null)
+                {
+                    if (item.Name.ToLower() != "earth")
+                    {
+                        if (item.distanceFromEarth * 2 <= maxDistanceSupported)
+                            destination_comboBox.Items.Add(item.Name);
+                    }
+                }
+            }
         }
 
         private void destination_comboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            destination_listBox.Items.Add(destination_comboBox.SelectedItem.ToString());
+            String selectedItemName = destination_comboBox.SelectedItem.ToString();
+            Planet itemSelected = null;
+            int temperatureSignal = 0;
+
+            destination_listBox.Items.Add(selectedItemName);
+
+            destination_comboBox.Items.Clear();
+            Console.WriteLine("Distancia disponivel Antes: " + availableDistance);
+            Console.WriteLine("Distancia disponivel Antes: " + maxDistanceSupported);
+
+            foreach (Planet item in data.Planet)
+            {
+                if (item.Name != null)
+                {
+                    if (item.Name.ToLower() == selectedItemName.ToLower())
+                    {
+                        itemSelected = item;
+
+                        if(item.averageTemperature > 0)
+                        {
+                            temperatureSignal = 1;
+                        }
+                        else
+                        {
+                            temperatureSignal = -1;
+                        }
+                        break;
+                    }
+                }
+            }
+
+            Console.WriteLine("Quantidade Itens: " + destination_listBox.Items.Count);
+            //recalcule availability
+            if (destination_listBox.Items.Count <= 1)
+            {
+                if (itemSelected != null)
+                    availableDistance = availableDistance - itemSelected.distanceFromEarth;
+            }
+            else
+            {
+                if (lastTemperatureSignal > 0)
+                {
+                    if (temperatureSignal > 0)
+                    {
+                        if (itemSelected.distanceFromEarth >= lastItemSelected.distanceFromEarth)
+                        {
+                            availableDistance = availableDistance - (itemSelected.distanceFromEarth - lastItemSelected.distanceFromEarth);
+                        }
+                        else
+                        {
+                            availableDistance = availableDistance - (lastItemSelected.distanceFromEarth - itemSelected.distanceFromEarth);
+                        }
+                    }
+                    else
+                    {
+                        availableDistance = availableDistance - (lastItemSelected.distanceFromEarth + itemSelected.distanceFromEarth);
+
+                    }
+                }
+                else
+                {
+                    if (temperatureSignal < 0)
+                    {
+                        if (itemSelected.distanceFromEarth >= lastItemSelected.distanceFromEarth)
+                        {
+                            availableDistance = availableDistance - (itemSelected.distanceFromEarth - lastItemSelected.distanceFromEarth);
+                        }
+                        else
+                        {
+                            availableDistance = availableDistance - (lastItemSelected.distanceFromEarth - itemSelected.distanceFromEarth);
+                        }
+                    }
+                    else
+                    {
+                        availableDistance = availableDistance - (lastItemSelected.distanceFromEarth + itemSelected.distanceFromEarth);
+
+                    }
+
+                }
+            }
+
+            lastItemSelected = itemSelected;
+            lastTemperatureSignal = temperatureSignal;
+
+            Console.WriteLine("Distancia disponivel: " + availableDistance);
+            Console.WriteLine("Item Selecionado: " + selectedItemName);
+
+            if (itemSelected != null)
+            {
+                foreach (Planet item in data.Planet)
+                {
+                    double newDistance = 0;
+
+                    if (item.Name != null)
+                    {
+                        if (item.Name.ToLower() != "earth" && item.Name.ToLower() != selectedItemName.ToLower())
+                        {
+                            if (temperatureSignal > 0)
+                            {
+                                if(item.averageTemperature >= 0)
+                                {
+                                    if (item.distanceFromEarth >= itemSelected.distanceFromEarth)
+                                    {
+                                        newDistance = availableDistance - ((item.distanceFromEarth - itemSelected.distanceFromEarth) + item.distanceFromEarth);
+
+                                        if (newDistance >= 0)
+                                        {
+                                            destination_comboBox.Items.Add(item.Name);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (itemSelected.distanceFromEarth >= 0)
+                                            destination_comboBox.Items.Add(item.Name);
+                                    }
+                                }
+                                else
+                                {
+                                    newDistance = availableDistance - (item.distanceFromEarth * 2 + itemSelected.distanceFromEarth);
+
+                                    if (newDistance >= 0)
+                                    {
+                                        destination_comboBox.Items.Add(item.Name);
+                                    }
+                                }
+                                    
+                            }
+                            else if(temperatureSignal < 0)
+                            {
+                                if (item.averageTemperature < 0)
+                                {
+                                    if (item.distanceFromEarth >= itemSelected.distanceFromEarth)
+                                    {
+                                        newDistance = availableDistance - ((item.distanceFromEarth - itemSelected.distanceFromEarth) + item.distanceFromEarth);
+
+                                        if (newDistance >= 0)
+                                        {
+                                            destination_comboBox.Items.Add(item.Name);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (itemSelected.distanceFromEarth >= 0)
+                                            destination_comboBox.Items.Add(item.Name);
+                                    }
+                                }
+                                else
+                                {
+                                    newDistance = availableDistance - (item.distanceFromEarth * 2 + itemSelected.distanceFromEarth);
+
+                                    if (newDistance >= 0)
+                                    {
+                                        destination_comboBox.Items.Add(item.Name);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void destination_listBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var itemToRemove = destination_listBox.SelectedItem;
-            //Console.WriteLine(destination_listBox.SelectedItems.ToString());
-            destination_listBox.Items.Remove(itemToRemove);
+            var itemToRemove = destination_listBox.SelectedIndex;
+
+            if (itemToRemove != -1)
+                destination_listBox.Items.RemoveAt(itemToRemove);
+        }
+
+        private void createRoute_button_Click(object sender, EventArgs e)
+        {
+            String routeCreated = "Earth";
+
+            route_textBox.Text = "User Created Route:\r\n\r\n";
+            for (int index =0; index < destination_listBox.Items.Count; index++)
+                routeCreated = routeCreated + " > " +destination_listBox.Items[index].ToString();
+            
+            route_textBox.Text = route_textBox.Text + routeCreated + " > "+ "Earth\r\n\r\n";
+            route_textBox.Text = route_textBox.Text + "Distance the spacecraft can still travel: " + availableDistance;
+        }
+
+        private void save_route_button_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

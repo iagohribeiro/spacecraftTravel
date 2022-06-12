@@ -19,10 +19,10 @@ namespace isarAssignment
         public Boolean habitable { get; set; }
 
         [JsonProperty(PropertyName = "diameter")]
-        public long diameter { get; set; }
+        public double diameter { get; set; }
 
         [JsonProperty(PropertyName = "averageTemperature")]
-        public long averageTemperature { get; set; }
+        public double averageTemperature { get; set; }
 
         [JsonProperty(PropertyName = "distanceFromEarth")]
         public double distanceFromEarth { get; set; }
@@ -30,7 +30,7 @@ namespace isarAssignment
         [JsonProperty(PropertyName = "isDwarf")]
         public Boolean isDwarf { get; set; }
 
-        public Planet (string name, long positionIndex, bool habitable, long diameter, long averageTemperature, double distanceFromEarth, bool isDwarf)
+        public Planet (string name, long positionIndex, bool habitable, double diameter, double averageTemperature, double distanceFromEarth, bool isDwarf)
         {
             Name = name;
             this.positionIndex = positionIndex;
