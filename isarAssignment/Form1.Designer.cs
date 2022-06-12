@@ -44,6 +44,7 @@
             this.route_textBox = new System.Windows.Forms.TextBox();
             this.logo_pictureBox = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.logo_pictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -235,6 +236,7 @@
         private System.Windows.Forms.TextBox route_textBox;
         private System.Windows.Forms.PictureBox logo_pictureBox;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }
 

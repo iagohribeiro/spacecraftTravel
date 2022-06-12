@@ -11,6 +11,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace isarAssignment
 {
@@ -22,6 +23,9 @@ namespace isarAssignment
         private double availableDistance = 0;
         private Planet lastItemSelected = null;
         private int lastTemperatureSignal = 0;
+        private String inputPath = "";
+        private String savedFilePath = "";
+        private String file = "";
         public s()
         {
             InitializeComponent();
@@ -320,9 +324,67 @@ namespace isarAssignment
             route_textBox.Text = route_textBox.Text + "Distance the spacecraft can still travel: " + availableDistance;
         }
 
+        private void openDialog()
+        {
+            Thread thread = new Thread(new ThreadStart(this.saveFile));
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        [STAThread]
         private void save_route_button_Click(object sender, EventArgs e)
         {
+            file = "";
+            //---------- General Data -------------------
+            file = file + "[GENERAL]\r\n";
+            file = file + "maxDistanceSupported: " + maxDistanceSupported + "\r\n";
+            file = file + "availableDistance: " + availableDistance + "\r\n";
+            file = file + "inputPath: " + inputPath + "\r\n";
+
+            //--------- Route Data --------------
+            file = file + "\r\n[ROUTE]\r\n";
+            for (int index = 0; index < destination_listBox.Items.Count; index++)
+                file = file + destination_listBox.Items[index].ToString() + "\r\n";
+
+            //--------- Route Result --------------
+            file = file + "\r\n[ROUTE RESULT]\r\n";
+                file = file + route_textBox.Text + "\r\n";
+
+            openDialog();
 
         }
+
+        [STAThread]
+        public void saveFile ()
+        {
+            saveFileDialog1.Title = "Save Route File";
+            saveFileDialog1.Filter = "Text File|.txt";
+            saveFileDialog1.FilterIndex = 0;
+            saveFileDialog1.FileName = "Route_File_" + DateTime.Now.ToString("ddMMyyyy_HHmmss");
+            saveFileDialog1.DefaultExt = ".txt";
+            saveFileDialog1.InitialDirectory = @"..\\";
+            saveFileDialog1.RestoreDirectory = true;
+
+            saveFileDialog1.CheckPathExists = true;
+
+            DialogResult result = saveFileDialog1.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                FileStream fs = new FileStream(saveFileDialog1.FileName, FileMode.Create);
+                StreamWriter writer = new StreamWriter(fs);
+                writer.Write(file);
+
+                writer.Close();
+
+                MessageBox.Show("File Saved Successfully!");
+            }
+            else if (result == DialogResult.Cancel)
+            {
+                MessageBox.Show("Operation was canceled");
+            }
+        }
+
     }
 }
