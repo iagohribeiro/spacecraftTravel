@@ -1,0 +1,127 @@
+{
+    "planets": [
+        {
+            "name": "Mercury",
+            "positionIndex": 1,
+            "habitable": false,
+            "diameter": 4879,
+            "averageTemperature": 427,
+            "distanceFromEarth": 82.1,
+            "isDwarf": false
+        },
+        {
+            "name": "Venus",
+            "positionIndex": 2,
+            "habitable": false,
+            "diameter": 12104,
+            "averageTemperature": 471,
+            "distanceFromEarth": 39.5,
+            "isDwarf": false
+        },
+        {
+            "name": "Earth",
+            "positionIndex": 3,
+            "habitable": true,
+            "diameter": 12742,
+            "averageTemperature": 15,
+            "distanceFromEarth": 0,
+            "isDwarf": false
+        },
+        {
+            "name": "Mars",
+            "positionIndex": 4,
+            "habitable": false,
+            "diameter": 6779,
+            "averageTemperature": -63,
+            "distanceFromEarth": 55.9,
+            "isDwarf": false
+        },
+        {
+            "name": "Ceres",
+            "positionIndex": 5,
+            "habitable": false,
+            "diameter": 946,
+            "averageTemperature": -106,
+            "distanceFromEarth": 237.1,
+            "isDwarf": true
+        },
+        {
+            "name": "Jupiter",
+            "positionIndex": 6,
+            "habitable": false,
+            "diameter": 139820,
+            "averageTemperature": -145,
+            "distanceFromEarth": 591.3
+        },
+        {
+            "name": "Saturn",
+            "positionIndex": 7,
+            "habitable": false,
+            "diameter": 116460,
+            "averageTemperature": -180,
+            "distanceFromEarth": 1201.5,
+            "isDwarf": false
+        },
+        {
+            "name": "Uranus",
+            "positionIndex": 8,
+            "habitable": false,
+            "diameter": 50724,
+            "averageTemperature": -197,
+            "distanceFromEarth": 2586.5,
+            "isDwarf": false
+        },
+        {
+            "name": "Neptune",
+            "positionIndex": 9,
+            "habitable": false,
+            "diameter": 49244,
+            "averageTemperature": -218,
+            "distanceFromEarth": 4310.5,
+            "isDwarf": false
+        },
+        {
+            "name": "Pluto",
+            "positionIndex": 10,
+            "habitable": false,
+            "diameter": 2376,
+            "averageTemperature": -233,
+            "distanceFromEarth": 4291.5,
+            "isDwarf": true
+        }
+    ],
+    "spacecrafts": [
+        {
+            "name": "Spectrum XIII",
+            "type": "Light Spacecruiser",
+            "capacity": 4,
+            "gravityGenerator": false,
+            "maxTravelDistance": 5620,
+            "asteroidDeflector": false
+        },
+        {
+            "name": "Starhopper",
+            "type": "Spacecruiser",
+            "capacity": 12,
+            "gravityGenerator": false,
+            "maxTravelDistance": 8300,
+            "asteroidDeflector": true
+        },
+        {
+            "name": "Oblivion II",
+            "type": "Spaceship",
+            "capacity": 30,
+            "gravityGenerator": true,
+            "maxTravelDistance": 13650,
+            "asteroidDeflector": true
+        },
+        {
+            "name": "Resolute",
+            "type": "Imperial Spaceship",
+            "capacity": 75,
+            "gravityGenerator": true,
+            "maxTravelDistance": 24180,
+            "asteroidDeflector": true
+        }
+    ]
+}

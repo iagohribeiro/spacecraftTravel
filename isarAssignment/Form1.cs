@@ -43,8 +43,7 @@ namespace isarAssignment
             route_textBox.BackColor = Color.White;
             spacecraft_ComboBox.Text = "Please Select a SpaceCraft";
 
-            //using the full path for testing purpose. It will be changed in the final version.
-            using (StreamReader r = new StreamReader("C:\\Users\\Iagoh Ribeiro Lima\\Downloads\\DotNetAssignment\\data.json"))
+            using (StreamReader r = new StreamReader("..\\..\\doc\\data.json"))
             {
                 string json = r.ReadToEnd();
                 data = JsonConvert.DeserializeObject<JsonData>(json);
@@ -112,7 +111,7 @@ namespace isarAssignment
 
             foreach (Spacecrafts item in data.Spacecrafts)
             {
-                if (item.Name != null && spacecraft_ComboBox.SelectedItem != null)
+                if (item.Name != null && spacecraft_ComboBox.SelectedItem != null && capacity_ComboBox.SelectedItem != null)
                 {
                     if (spacecraft_ComboBox.SelectedItem.ToString() == item.Name)
                     {
@@ -142,7 +141,11 @@ namespace isarAssignment
 
         private void destination_comboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            String selectedItemName = destination_comboBox.SelectedItem.ToString();
+            String selectedItemName = "";
+
+            if (destination_comboBox.SelectedItem != null)
+                selectedItemName = destination_comboBox.SelectedItem.ToString();
+            
             Planet itemSelected = null;
             int temperatureSignal = 0;
 

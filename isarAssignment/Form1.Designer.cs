@@ -89,7 +89,7 @@
             // 
             this.destination_listBox.FormattingEnabled = true;
             this.destination_listBox.ItemHeight = 25;
-            this.destination_listBox.Location = new System.Drawing.Point(183, 556);
+            this.destination_listBox.Location = new System.Drawing.Point(183, 540);
             this.destination_listBox.Name = "destination_listBox";
             this.destination_listBox.Size = new System.Drawing.Size(521, 404);
             this.destination_listBox.TabIndex = 4;
@@ -98,7 +98,7 @@
             // destination_list_label
             // 
             this.destination_list_label.AutoSize = true;
-            this.destination_list_label.Location = new System.Drawing.Point(345, 502);
+            this.destination_list_label.Location = new System.Drawing.Point(345, 486);
             this.destination_list_label.Name = "destination_list_label";
             this.destination_list_label.Size = new System.Drawing.Size(160, 25);
             this.destination_list_label.TabIndex = 5;
@@ -107,7 +107,7 @@
             // route_label
             // 
             this.route_label.AutoSize = true;
-            this.route_label.Location = new System.Drawing.Point(1086, 502);
+            this.route_label.Location = new System.Drawing.Point(1086, 486);
             this.route_label.Name = "route_label";
             this.route_label.Size = new System.Drawing.Size(69, 25);
             this.route_label.TabIndex = 7;
@@ -133,7 +133,7 @@
             // 
             // createRoute_button
             // 
-            this.createRoute_button.Location = new System.Drawing.Point(730, 608);
+            this.createRoute_button.Location = new System.Drawing.Point(730, 592);
             this.createRoute_button.Name = "createRoute_button";
             this.createRoute_button.Size = new System.Drawing.Size(97, 74);
             this.createRoute_button.TabIndex = 10;
@@ -143,7 +143,7 @@
             // 
             // load_route_button
             // 
-            this.load_route_button.Location = new System.Drawing.Point(730, 715);
+            this.load_route_button.Location = new System.Drawing.Point(730, 699);
             this.load_route_button.Name = "load_route_button";
             this.load_route_button.Size = new System.Drawing.Size(97, 74);
             this.load_route_button.TabIndex = 11;
@@ -152,7 +152,7 @@
             // 
             // save_route_button
             // 
-            this.save_route_button.Location = new System.Drawing.Point(730, 828);
+            this.save_route_button.Location = new System.Drawing.Point(730, 812);
             this.save_route_button.Name = "save_route_button";
             this.save_route_button.Size = new System.Drawing.Size(97, 74);
             this.save_route_button.TabIndex = 12;
@@ -162,7 +162,7 @@
             // 
             // route_textBox
             // 
-            this.route_textBox.Location = new System.Drawing.Point(861, 556);
+            this.route_textBox.Location = new System.Drawing.Point(861, 540);
             this.route_textBox.Multiline = true;
             this.route_textBox.Name = "route_textBox";
             this.route_textBox.Size = new System.Drawing.Size(521, 404);
