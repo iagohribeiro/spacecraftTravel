@@ -1,8 +1,5 @@
 # Spacecraft Travel
 
-` **Note: The project description and code are not complete yet** `
-
-
 ## **Introduction**
 ```
 The Spacecraft Travel Project aims to calculate the route of a travel between planets,
@@ -48,15 +45,18 @@ At each choice of a destination, the capacity of the spacecraft will decrease, c
 ------------
 
 #### **Create Route**
-After selecting all the routes and pressing the "Create Route" button, the route chosen by the user will be shown, considering that the user will ALWAYS leave the Earth and return to it. Besides that, it is also shown the capacity that the spaceship still has.
+After selecting all the routes and pressing the `Create Route` button, the route chosen by the user will be shown, considering that the user will ALWAYS leave the Earth and return to it. Besides that, it is also shown the capacity that the spaceship still has.
 
 <img src="https://github.com/iagohribeiro/spacecraftTravel/blob/master/isarAssignment/doc/routeResult.PNG" width="500">
 
 ------------
 
 #### **Save**
-If the user wants to save a file, when clicking on the "Save Route" button, a screen will appear for him to choose the place where he wants to save the file and, after that, the file will be generated with some necessary data for when he wants to reopen where he left off. 
+If the user wants to save a file, when clicking on the `Save Route` button, a screen will appear for him to choose the place where he wants to save the file and, after that, the file will be generated with some necessary data for when he wants to reopen where he left off. 
 
 <img src="https://github.com/iagohribeiro/spacecraftTravel/blob/master/isarAssignment/doc/saveRoute.PNG" width="500">
 
-**To Be Done**
+------------
+
+#### **Open**
+To open a file, simply click the `Load File` button and select the desired file. The data in this file, if it follows the pattern defined by the software, will be loaded and added from the UI.
