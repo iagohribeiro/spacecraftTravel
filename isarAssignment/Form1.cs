@@ -26,6 +26,10 @@ namespace isarAssignment
         private String inputPath = "";
         private String savedFilePath = "";
         private String file = "";
+        private String loadSpacecraft = "";
+        private String loadCapacity = "";
+        private String loadDestinationItems = "";
+        private String loadText = "";
         public s()
         {
             InitializeComponent();
@@ -129,6 +133,12 @@ namespace isarAssignment
                     for (int index = 0; index < capacity; index++)
                     {
                         capacity_ComboBox.Items.Add(index + 1);
+                    }
+
+                    if (loadCapacity != "")
+                    {
+                        capacity_ComboBox.SelectedItem = int.Parse(loadCapacity);
+                        Console.WriteLine(loadCapacity);
                     }
                 }
                 catch(Exception ex)
@@ -432,12 +442,23 @@ namespace isarAssignment
             route_textBox.Text = route_textBox.Text + "Distance the spacecraft can still travel: " + availableDistance;
         }
 
-        private void openDialog()
+        private void openDialog(String type)
         {
-            Thread thread = new Thread(new ThreadStart(this.saveFile));
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.IsBackground = true;
-            thread.Start();
+            if (type == "save")
+            {
+                Thread thread = new Thread(new ThreadStart(this.saveFile));
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.IsBackground = true;
+                thread.Start();
+            }
+            else
+            {
+                Thread thread = new Thread(new ThreadStart(this.loadFile));
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.IsBackground = true;
+                thread.Start();
+                thread.Join();
+            }
         }
 
         [STAThread]
@@ -446,20 +467,53 @@ namespace isarAssignment
             file = "";
             //---------- General Data -------------------
             file = file + "[GENERAL]\r\n";
-            file = file + "maxDistanceSupported: " + maxDistanceSupported + "\r\n";
-            file = file + "availableDistance: " + availableDistance + "\r\n";
-            file = file + "inputPath: " + inputPath + "\r\n";
+            file = file + "maxDistanceSupported:" + maxDistanceSupported + "\r\n";
+            file = file + "availableDistance:" + availableDistance + "\r\n";
+            file = file + "inputPath:" + inputPath + "\r\n";
+            file = file + "itemSelected:" + spacecraft_ComboBox.Text + "\r\n";
+            file = file + "capacitySelected:" + capacity_ComboBox.Text + "\r\n";
+
+            //Separators to make the file easier to read
+            file = file + "------";
 
             //--------- Route Data --------------
             file = file + "\r\n[ROUTE]\r\n";
+
             for (int index = 0; index < destination_listBox.Items.Count; index++)
                 file = file + destination_listBox.Items[index].ToString() + "\r\n";
+
+            file = file + "------";
 
             //--------- Route Result --------------
             file = file + "\r\n[ROUTE RESULT]\r\n";
                 file = file + route_textBox.Text + "\r\n";
 
-            openDialog();
+            file = file + "------";
+
+            openDialog("save");
+
+        }
+
+        [STAThread]
+        private void load_route_button_Click(object sender, EventArgs e)
+        {
+            openDialog("load");
+
+            if(loadSpacecraft != "")
+                spacecraft_ComboBox.SelectedItem = loadSpacecraft;
+
+            String[] itemsFromFile = loadDestinationItems.Split(':');
+
+            for (int index = 1; index < itemsFromFile.Length; index++)
+                destination_listBox.Items.Add(itemsFromFile[index]);
+
+            route_textBox.Text = loadText;
+
+            //cleanning the attibutes
+            loadSpacecraft = "";
+            loadCapacity = "";
+            loadDestinationItems = "";
+            loadText = "";
 
         }
 
@@ -467,7 +521,7 @@ namespace isarAssignment
         public void saveFile ()
         {
             saveFileDialog1.Title = "Save Route File";
-            saveFileDialog1.Filter = "Text File|.txt";
+            saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             saveFileDialog1.FilterIndex = 0;
             saveFileDialog1.FileName = "Route_File_" + DateTime.Now.ToString("ddMMyyyy_HHmmss");
             saveFileDialog1.DefaultExt = ".txt";
@@ -476,7 +530,7 @@ namespace isarAssignment
 
             saveFileDialog1.CheckPathExists = true;
 
-                DialogResult result = saveFileDialog1.ShowDialog();
+            DialogResult result = saveFileDialog1.ShowDialog();
 
             if (result == DialogResult.OK)
             {
@@ -502,5 +556,109 @@ namespace isarAssignment
                 MessageBox.Show("Operation was canceled!");
             }
         }
+
+        [STAThread]
+        public void loadFile()
+        {
+            openFileDialog1.Title = "Open Route File";
+            openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.DefaultExt = ".txt";
+            openFileDialog1.RestoreDirectory = true;
+            var fileContent = string.Empty;
+            var filePath = string.Empty;
+            String test = "";
+
+            openFileDialog1.CheckPathExists = true;
+
+            DialogResult result = openFileDialog1.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                /* The reading will be done following the structure defined in the save_route_button_Click method.
+                 * As the loadFile method executes within a thread, it is not possible to access form elements.
+                 * With this, the file information was stored in attributes.*/
+                try
+                {
+                    filePath = openFileDialog1.FileName;
+                    var fileStream = openFileDialog1.OpenFile();
+                    
+
+                    using (StreamReader reader = new StreamReader(fileStream))
+                    {
+                        while (reader.Peek() >= 0)
+                        {
+                            String content = reader.ReadLine();
+
+                            if (content == "[GENERAL]")
+                            {
+                                content = reader.ReadLine();
+                                while (content != "------")
+                                {
+                                    String[] elements = content.Split(':');
+
+                                    if (elements[0] != null || elements[1] != null)
+                                    {
+                                        if (elements[0].ToLower() == "maxDistanceSupported".ToLower())
+                                        {
+                                            maxDistanceSupported = double.Parse(elements[1].ToString());
+                                        }
+                                        else if (elements[0].ToLower() == "availableDistance".ToLower())
+                                        {
+                                            availableDistance = double.Parse(elements[1].ToString());
+                                        }
+                                        else if (elements[0].ToLower() == "inputPath".ToLower())
+                                        {
+                                            inputPath = elements[1].ToString();
+                                        }
+                                        else if (elements[0].ToLower() == "itemSelected".ToLower())
+                                        {
+                                            loadSpacecraft = elements[1].ToString();
+                                        }
+                                        else if (elements[0].ToLower() == "capacitySelected".ToLower())
+                                        {
+                                            loadCapacity = elements[1].ToString();
+                                        }
+                                    }
+                                    content = reader.ReadLine();
+                                }
+                            }
+                            else if (content == "[ROUTE]")
+                            {
+                                content = reader.ReadLine();
+                                while (content != "------")
+                                {
+                                    loadDestinationItems = loadDestinationItems + ":" + content;
+                                    content = reader.ReadLine();
+                                }
+                            }
+                            else if (content == "[ROUTE RESULT]")
+                            {
+                                content = reader.ReadLine();
+                                String text = content;
+
+                                while (content != "------")
+                                {
+                                    text = text + content.ToString() + "\r\n";
+                                    content = reader.ReadLine();
+                                }
+                                loadText = text;
+                            }
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Could not open the file!");
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+            else
+            {
+                MessageBox.Show("Operation was canceled!");
+            }
+        } 
     }
 }

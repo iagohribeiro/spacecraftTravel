@@ -45,6 +45,7 @@
             this.logo_pictureBox = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.logo_pictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -149,6 +150,7 @@
             this.load_route_button.TabIndex = 11;
             this.load_route_button.Text = "Load Route";
             this.load_route_button.UseVisualStyleBackColor = true;
+            this.load_route_button.Click += new System.EventHandler(this.load_route_button_Click);
             // 
             // save_route_button
             // 
@@ -188,6 +190,10 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 15;
             this.pictureBox1.TabStop = false;
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // s
             // 
@@ -237,6 +243,7 @@
         private System.Windows.Forms.PictureBox logo_pictureBox;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 

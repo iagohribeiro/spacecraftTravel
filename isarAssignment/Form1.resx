@@ -121,7 +121,7 @@
   <data name="logo_pictureBox.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAANOdJREFUeF7t3fmfHPV95/H91UnsZHOY2ImTbGwSZ5NsvIGsE8dOYpzYu3G8ho2N
+        wgAADsIBFShKgAAANOdJREFUeF7t3fmfHPV95/H91UnsZHOY2ImTbGwSZ5NsvIGsE8dOYpzYu3G8ho2N
         D2yJW5ySwOaQZcBInJLBHOIGgQCDuAXmBgFG4hQgQIC4NPdoZnTMKPsP1M67vAXt1udb57e7q7/1+uH5
         sFHX91vVM9P9ru+3vsd/2rVrVwQAAPobgQ4AQAAIdAAAAkCgAwAQAAIdAIAAEOgAAASAQAcAIAAEOgAA
         ASDQAQAIAIEOAEAACHQAAAJAoAMAEAACHQCAABDoAAAEgEAHACAABDoAAAEg0AEACACBDgBAAAh0AAAC
@@ -353,7 +353,7 @@
   <data name="logo_pictureBox.InitialImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAPoAAAD6CAYAAACI7Fo9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAH
-        YQAAB2EBlcO4tgAAFp5JREFUeF7tnfvXFVd5x/tr77ar1d60Wk1b29Wr9qpdrW3txa5as2zTrrYJ1VhD
+        YAAAB2ABR4RaUgAAFp5JREFUeF7tnfvXFVd5x/tr77ar1d60Wk1b29Wr9qpdrW3txa5as2zTrrYJ1VhD
         0CRYJAlEQML9BUFogISEi4IEkRAhQCAxghqJhIgCyRtEeO/3K+0/sHu+k+53nrPfZ2b2OWfOOXPO/v7w
         WfDOPLPPnDnzmX2dvX/gxo0bhhDS3lB0QgKAohMSABSdkACg6IQEAEUnJAAoOiEBQNEJCQCKTkgAUHRC
         AoCiExIAFJ2QAKDohAQARSckACg6IQFA0QkJAIpOSABQdEICgKITEgAUnZAAoOiEBABFJyQAKDohAUDR
@@ -456,7 +456,7 @@
   <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAzoAAAC/CAYAAAA2JKlCAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAd
-        hgAAHYYBXaITgQAAJKlJREFUeF7t3fe/ZVV9xvH8mmYsSdBEjdEQe+walagxiRWjRsXEGEEBKSJFwAFp
+        hQAAHYUB8Bsy7AAAJKlJREFUeF7t3fe/ZVV9xvH8mmYsSdBEjdEQe+walagxiRWjRsXEGEEBKSJFwAFp
         ggLDUATpKh1B0aEqRZrSkSbOAALOLXPvFGbmzvAf7Jzn4Eq2m+/Za5e11rln8fnh/XolcvfZe07Zez2r
         fNcfPPnkkwUAAAAA5ISgAwAAACA7BB0AAAAA2SHoAAAAAMgOQQcAAABAdgg6AAAAALJD0AEAAACQHYIO
         AAAAgOwQdAAAAABkh6ADAAAAIDsEHQAAAADZIegAAAAAyA5BBwAAAEB2CDoAAAAAskPQAQAAAJAdgg4A
@@ -617,5 +617,8 @@
   </data>
   <metadata name="saveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
+  </metadata>
+  <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>258, 17</value>
   </metadata>
 </root>
