@@ -38,13 +38,5 @@ namespace isarAssignment
         }
 
         public Spacecrafts() { }
-
-        public void listSpacecrafts(Spacecrafts[] Spacecrafts)
-        {
-            foreach (Spacecrafts item in Spacecrafts)
-            {
-                Console.Write(item.Name);
-            }
-        }
     }
 }

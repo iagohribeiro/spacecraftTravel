@@ -9,6 +9,7 @@ namespace isarAssignment
 {
     internal class JsonData
     {
+        //Newtonsoft library help to define how the structure of the Json file will be read in addition to the name of the properties.
         [JsonProperty(PropertyName = "planets")]
         public List<Planet> Planet { get; set; }
 

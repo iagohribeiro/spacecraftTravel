@@ -18,7 +18,7 @@ namespace isarAssignment
     
     public partial class s : Form
     {
-        private JsonData data;
+        private JsonData data = null;
         private double maxDistanceSupported = 0;
         private double availableDistance = 0;
         private Planet lastItemSelected = null;
@@ -43,21 +43,45 @@ namespace isarAssignment
             route_textBox.BackColor = Color.White;
             spacecraft_ComboBox.Text = "Please Select a SpaceCraft";
 
-            using (StreamReader r = new StreamReader("..\\..\\doc\\data.json"))
+            //Read the data json to populate the data attibute
+            try
             {
-                string json = r.ReadToEnd();
-                data = JsonConvert.DeserializeObject<JsonData>(json);
+                using (StreamReader r = new StreamReader("..\\..\\doc\\data.json"))
+                {
+                    string json = r.ReadToEnd();
+                    data = JsonConvert.DeserializeObject<JsonData>(json);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("The file could not be read: ");
+                Console.WriteLine(ex.Message);
             }
 
-            //Console.WriteLine(data.Spacecrafts[0].Name);
-            spacecraft_ComboBox.Items.Add("Please Select a Spacecraft");
+            spacecraft_ComboBox.Text = "Please Select a Spacecraft";
 
-            foreach (Spacecrafts item in data.Spacecrafts)
+            //Populates the spacecraft combox from the data obtained from the json file
+            if (data != null)
             {
-                if (item.Name != null)
+                try
                 {
-                    spacecraft_ComboBox.Items.Add(item.Name);
+                    foreach (Spacecrafts item in data.Spacecrafts)
+                    {
+                        if (item.Name != null)
+                        {
+                            spacecraft_ComboBox.Items.Add(item.Name);
+                        }
+                    }
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Item cannot be added to spaceships list: ");
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            else
+            {
+                Console.WriteLine("The file could not be read correctly.");
             }
         }
 
@@ -65,7 +89,8 @@ namespace isarAssignment
         {
             int capacity = 0;
 
-            if (spacecraft_ComboBox.SelectedItem.ToString() == "Please Select a Spacecraft")
+            //Checks if there is already a spacecraft selected to keeo some fields blocked
+            if (spacecraft_ComboBox.Text.ToString().ToLower() == "Please Select a Spacecraft".ToLower())
             {
                 capacity_ComboBox.Enabled = false;
                 destination_comboBox.Enabled = false;
@@ -77,25 +102,40 @@ namespace isarAssignment
             }
             else
             {
-                foreach (Spacecrafts item in data.Spacecrafts)
+                /*
+                 * With each change of item selected in the spacecraft comboBox,
+                 * the variable capacity will be updated to be able to populate the
+                 * comboBox with the amount of passengers that the user can choose
+                 */
+                try
                 {
-                    if (item.Name != null && spacecraft_ComboBox.SelectedItem != null)
+                    foreach (Spacecrafts item in data.Spacecrafts)
                     {
-                        if (spacecraft_ComboBox.SelectedItem.ToString() == item.Name)
+                        if (item.Name != null && spacecraft_ComboBox.SelectedItem != null)
                         {
-                            capacity = item.Capacity;
-                            break;
+                            if (spacecraft_ComboBox.SelectedItem.ToString() == item.Name)
+                            {
+                                capacity = item.Capacity;
+                                break;
+                            }
                         }
                     }
-                }
 
-                capacity_ComboBox.Items.Clear();
-                destination_listBox.Items.Clear();
-                capacity_ComboBox.Text = "";
-                capacity_ComboBox.Enabled = true;
-                for (int index = 0; index < capacity; index++)
+                    capacity_ComboBox.Items.Clear();
+                    destination_listBox.Items.Clear();
+                    capacity_ComboBox.Text = "";
+                    capacity_ComboBox.Enabled = true;
+
+                    for (int index = 0; index < capacity; index++)
+                    {
+                        capacity_ComboBox.Items.Add(index + 1);
+                    }
+                }
+                catch(Exception ex)
                 {
-                    capacity_ComboBox.Items.Add(index + 1);
+                    Console.WriteLine("Item cannot be added to the comboBox: ");
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.ToString());
                 }
             }
 
@@ -103,207 +143,264 @@ namespace isarAssignment
 
         private void capacity_ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            //After choosing the capacity, all fields on the main page can be activated.
             destination_comboBox.Enabled = true;
             destination_listBox.Enabled = true;
             route_textBox.Enabled = true;
             createRoute_button.Enabled = true;
             save_route_button.Enabled = true;
 
-            foreach (Spacecrafts item in data.Spacecrafts)
+            try
             {
-                if (item.Name != null && spacecraft_ComboBox.SelectedItem != null && capacity_ComboBox.SelectedItem != null)
+                foreach (Spacecrafts item in data.Spacecrafts)
                 {
-                    if (spacecraft_ComboBox.SelectedItem.ToString() == item.Name)
+                    if (item.Name != null && spacecraft_ComboBox.SelectedItem != null && capacity_ComboBox.SelectedItem != null)
                     {
-                        maxDistanceSupported = item.MaxTravelDistance * (1 - (0.3 / (float)item.Capacity) * (float)int.Parse(capacity_ComboBox.SelectedItem.ToString()));
-                        break;
+                        if (spacecraft_ComboBox.SelectedItem.ToString().ToLower() == item.Name.ToLower())
+                        {
+                            /* Calculating the maximum distance that the spacecraft can travel after choosing the
+                             * number of passengers. The Equation is detailed in the link:
+                             * https://github.com/iagohribeiro/spacecraftTravel#destination
+                             */
+                            maxDistanceSupported = item.MaxTravelDistance * (1 - (0.3 / (float)item.Capacity) * (float)int.Parse(capacity_ComboBox.SelectedItem.ToString()));
+                            break;
+                        }
+                    }
+                }
+                availableDistance = maxDistanceSupported;
+
+                destination_comboBox.Items.Clear();
+                destination_listBox.Items.Clear();
+                route_textBox.Clear();
+
+                /* Pupulate the destination box, considering that the departure will be from Earth. In addition,
+                 * it only adds the destinations that the spacecraft is able to go from its maximum distance
+                 * calculated previously.
+                 */
+                foreach (Planet item in data.Planet)
+                {
+                    if (item.Name != null)
+                    {
+                        if (item.Name.ToLower() != "earth")
+                        {
+                            if (item.distanceFromEarth * 2 <= maxDistanceSupported)
+                                destination_comboBox.Items.Add(item.Name);
+                        }
                     }
                 }
             }
-            availableDistance = maxDistanceSupported;
-
-            destination_comboBox.Items.Clear();
-            destination_listBox.Items.Clear();
-            route_textBox.Clear();
-
-            foreach (Planet item in data.Planet)
+            catch (Exception ex)
             {
-                if (item.Name != null)
-                {
-                    if (item.Name.ToLower() != "earth")
-                    {
-                        if (item.distanceFromEarth * 2 <= maxDistanceSupported)
-                            destination_comboBox.Items.Add(item.Name);
-                    }
-                }
+                Console.WriteLine("Item cannot be added to the comboBox: ");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.ToString());
             }
         }
 
         private void destination_comboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             String selectedItemName = "";
-
-            if (destination_comboBox.SelectedItem != null)
-                selectedItemName = destination_comboBox.SelectedItem.ToString();
-            
             Planet itemSelected = null;
             int temperatureSignal = 0;
 
-            destination_listBox.Items.Add(selectedItemName);
-
-            destination_comboBox.Items.Clear();
-            Console.WriteLine("Distancia disponivel Antes: " + availableDistance);
-            Console.WriteLine("Distancia disponivel Antes: " + maxDistanceSupported);
-
-            foreach (Planet item in data.Planet)
+            if (destination_comboBox.SelectedItem != null)
             {
-                if (item.Name != null)
-                {
-                    if (item.Name.ToLower() == selectedItemName.ToLower())
-                    {
-                        itemSelected = item;
-
-                        if(item.averageTemperature > 0)
-                        {
-                            temperatureSignal = 1;
-                        }
-                        else
-                        {
-                            temperatureSignal = -1;
-                        }
-                        break;
-                    }
-                }
-            }
-
-            Console.WriteLine("Quantidade Itens: " + destination_listBox.Items.Count);
-            //recalcule availability
-            if (destination_listBox.Items.Count <= 1)
-            {
-                if (itemSelected != null)
-                    availableDistance = availableDistance - itemSelected.distanceFromEarth;
+                selectedItemName = destination_comboBox.SelectedItem.ToString();
             }
             else
             {
-                if (lastTemperatureSignal > 0)
-                {
-                    if (temperatureSignal > 0)
-                    {
-                        if (itemSelected.distanceFromEarth >= lastItemSelected.distanceFromEarth)
-                        {
-                            availableDistance = availableDistance - (itemSelected.distanceFromEarth - lastItemSelected.distanceFromEarth);
-                        }
-                        else
-                        {
-                            availableDistance = availableDistance - (lastItemSelected.distanceFromEarth - itemSelected.distanceFromEarth);
-                        }
-                    }
-                    else
-                    {
-                        availableDistance = availableDistance - (lastItemSelected.distanceFromEarth + itemSelected.distanceFromEarth);
+                Console.WriteLine("No items were selected");
+            }
 
+            destination_listBox.Items.Add(selectedItemName);
+            destination_comboBox.Items.Clear();
+
+            //Assuming that the planets are aligned on a temperature ruler, let's get what the temperature signal of the selected planet is.
+            if (data != null && data.Planet != null)
+            {
+                foreach (Planet item in data.Planet)
+                {
+                    if (item.Name != null)
+                    {
+                        if (item.Name.ToLower() == selectedItemName.ToLower())
+                        {
+                            itemSelected = item;
+
+                            if (item.averageTemperature > 0)
+                            {
+                                temperatureSignal = 1;
+                            }
+                            else
+                            {
+                                temperatureSignal = -1;
+                            }
+                            break;
+                        }
                     }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Could not get temperature signal!");
+            }
+
+            /* He we are assuming that the planets are aligned on a temperature ruler.
+             * 
+             * Checks if the planet was the first chosen from the list of destinations and, if so, recalculates
+             * the available distance by decreasing its distance to the distance from Earth.
+             * 
+             * If not the first selected. Checks which signal of the temperature of the last selected destination.
+             * 
+             * If the temperature signal of the current destination is the same as the previous one: 
+             * * After that, it checks if the earth distance of the selected item is smaller than the previously selected
+             *   item, then considers the distance between the two planets. If the distance from the earth of the selected
+             *   item is smaller than the distance of the previously selected item, also the distance between the two planets
+             *   is considered in the account.
+             * 
+             * If the temperature signal of the current destination is different from the previous one:
+             * * It has to be considered the distance from the earth of the two planets, since the earth will possibly be in
+             *   the middle of them.
+             */
+
+            if (itemSelected != null)
+            {
+                if (destination_listBox.Items.Count <= 1)
+                {
+                      availableDistance = availableDistance - itemSelected.distanceFromEarth;
                 }
                 else
                 {
-                    if (temperatureSignal < 0)
+                    if (lastTemperatureSignal > 0)
                     {
-                        if (itemSelected.distanceFromEarth >= lastItemSelected.distanceFromEarth)
+                        if (temperatureSignal > 0)
                         {
-                            availableDistance = availableDistance - (itemSelected.distanceFromEarth - lastItemSelected.distanceFromEarth);
+                            if (itemSelected.distanceFromEarth >= lastItemSelected.distanceFromEarth)
+                            {
+                                availableDistance = availableDistance - (itemSelected.distanceFromEarth - lastItemSelected.distanceFromEarth);
+                            }
+                            else
+                            {
+                                availableDistance = availableDistance - (lastItemSelected.distanceFromEarth - itemSelected.distanceFromEarth);
+                            }
                         }
                         else
                         {
-                            availableDistance = availableDistance - (lastItemSelected.distanceFromEarth - itemSelected.distanceFromEarth);
+                            availableDistance = availableDistance - (lastItemSelected.distanceFromEarth + itemSelected.distanceFromEarth);
+
                         }
                     }
                     else
                     {
-                        availableDistance = availableDistance - (lastItemSelected.distanceFromEarth + itemSelected.distanceFromEarth);
+                        if (temperatureSignal < 0)
+                        {
+                            if (itemSelected.distanceFromEarth >= lastItemSelected.distanceFromEarth)
+                            {
+                                availableDistance = availableDistance - (itemSelected.distanceFromEarth - lastItemSelected.distanceFromEarth);
+                            }
+                            else
+                            {
+                                availableDistance = availableDistance - (lastItemSelected.distanceFromEarth - itemSelected.distanceFromEarth);
+                            }
+                        }
+                        else
+                        {
+                            availableDistance = availableDistance - (lastItemSelected.distanceFromEarth + itemSelected.distanceFromEarth);
+
+                        }
 
                     }
-
                 }
+            }
+            else
+            {
+                Console.WriteLine("Could not calculate the available Distance!");
             }
 
             lastItemSelected = itemSelected;
             lastTemperatureSignal = temperatureSignal;
 
-            Console.WriteLine("Distancia disponivel: " + availableDistance);
-            Console.WriteLine("Item Selecionado: " + selectedItemName);
-
+            /* After calculating the available distance of the spacecraft. It is calculated, considering 
+             * the available distance and the last chosen planet, which planets the spacecraft is able
+             * to visit to fill the destination comboBox again.*/
             if (itemSelected != null)
             {
-                foreach (Planet item in data.Planet)
+                if (data != null && data.Planet != null)
                 {
-                    double newDistance = 0;
-
-                    if (item.Name != null)
+                    foreach (Planet item in data.Planet)
                     {
-                        if (item.Name.ToLower() != "earth" && item.Name.ToLower() != selectedItemName.ToLower())
+                        double newDistance = 0;
+
+                        if (item.Name != null)
                         {
-                            if (temperatureSignal > 0)
+                            if (item.Name.ToLower() != selectedItemName.ToLower())
                             {
-                                if(item.averageTemperature >= 0)
+                                if (temperatureSignal > 0)
                                 {
-                                    if (item.distanceFromEarth >= itemSelected.distanceFromEarth)
+                                    if (item.averageTemperature >= 0)
                                     {
-                                        newDistance = availableDistance - ((item.distanceFromEarth - itemSelected.distanceFromEarth) + item.distanceFromEarth);
+                                        if (item.distanceFromEarth >= itemSelected.distanceFromEarth)
+                                        {
+                                            newDistance = availableDistance - ((item.distanceFromEarth - itemSelected.distanceFromEarth) + item.distanceFromEarth);
+
+                                            if (newDistance >= 0)
+                                            {
+                                                destination_comboBox.Items.Add(item.Name);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (itemSelected.distanceFromEarth >= 0)
+                                                destination_comboBox.Items.Add(item.Name);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        newDistance = availableDistance - (item.distanceFromEarth * 2 + itemSelected.distanceFromEarth);
 
                                         if (newDistance >= 0)
                                         {
                                             destination_comboBox.Items.Add(item.Name);
                                         }
                                     }
+
+                                }
+                                else if (temperatureSignal < 0)
+                                {
+                                    if (item.averageTemperature < 0)
+                                    {
+                                        if (item.distanceFromEarth >= itemSelected.distanceFromEarth)
+                                        {
+                                            newDistance = availableDistance - ((item.distanceFromEarth - itemSelected.distanceFromEarth) + item.distanceFromEarth);
+
+                                            if (newDistance >= 0)
+                                            {
+                                                destination_comboBox.Items.Add(item.Name);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (itemSelected.distanceFromEarth >= 0)
+                                                destination_comboBox.Items.Add(item.Name);
+                                        }
+                                    }
                                     else
                                     {
-                                        if (itemSelected.distanceFromEarth >= 0)
-                                            destination_comboBox.Items.Add(item.Name);
-                                    }
-                                }
-                                else
-                                {
-                                    newDistance = availableDistance - (item.distanceFromEarth * 2 + itemSelected.distanceFromEarth);
-
-                                    if (newDistance >= 0)
-                                    {
-                                        destination_comboBox.Items.Add(item.Name);
-                                    }
-                                }
-                                    
-                            }
-                            else if(temperatureSignal < 0)
-                            {
-                                if (item.averageTemperature < 0)
-                                {
-                                    if (item.distanceFromEarth >= itemSelected.distanceFromEarth)
-                                    {
-                                        newDistance = availableDistance - ((item.distanceFromEarth - itemSelected.distanceFromEarth) + item.distanceFromEarth);
+                                        newDistance = availableDistance - (item.distanceFromEarth * 2 + itemSelected.distanceFromEarth);
 
                                         if (newDistance >= 0)
                                         {
                                             destination_comboBox.Items.Add(item.Name);
                                         }
-                                    }
-                                    else
-                                    {
-                                        if (itemSelected.distanceFromEarth >= 0)
-                                            destination_comboBox.Items.Add(item.Name);
-                                    }
-                                }
-                                else
-                                {
-                                    newDistance = availableDistance - (item.distanceFromEarth * 2 + itemSelected.distanceFromEarth);
-
-                                    if (newDistance >= 0)
-                                    {
-                                        destination_comboBox.Items.Add(item.Name);
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
+            else
+            {
+                Console.WriteLine("No items were selected");
             }
         }
 
@@ -315,15 +412,23 @@ namespace isarAssignment
                 destination_listBox.Items.RemoveAt(itemToRemove);
         }
 
+
         private void createRoute_button_Click(object sender, EventArgs e)
         {
+            //The starting point will always be the earth
             String routeCreated = "Earth";
 
+            //The route structure will be created to be printed from the TextBox to the user.
             route_textBox.Text = "User Created Route:\r\n\r\n";
-            for (int index =0; index < destination_listBox.Items.Count; index++)
-                routeCreated = routeCreated + " > " +destination_listBox.Items[index].ToString();
-            
-            route_textBox.Text = route_textBox.Text + routeCreated + " > "+ "Earth\r\n\r\n";
+
+            for (int index = 0; index < destination_listBox.Items.Count; index++)
+            {
+                if (!(destination_listBox.Items[index].ToString().ToLower() == "earth" && index + 1 >= destination_listBox.Items.Count))
+                    routeCreated = routeCreated + " > " + destination_listBox.Items[index].ToString();
+            }
+
+            //Add earth at the end since spacecraft always have to return earth
+            route_textBox.Text = route_textBox.Text + routeCreated + " > " + "Earth\r\n\r\n";
             route_textBox.Text = route_textBox.Text + "Distance the spacecraft can still travel: " + availableDistance;
         }
 
@@ -371,23 +476,31 @@ namespace isarAssignment
 
             saveFileDialog1.CheckPathExists = true;
 
-            DialogResult result = saveFileDialog1.ShowDialog();
+                DialogResult result = saveFileDialog1.ShowDialog();
 
             if (result == DialogResult.OK)
             {
-                FileStream fs = new FileStream(saveFileDialog1.FileName, FileMode.Create);
-                StreamWriter writer = new StreamWriter(fs);
-                writer.Write(file);
+                try
+                {
+                    FileStream fs = new FileStream(saveFileDialog1.FileName, FileMode.Create);
+                    StreamWriter writer = new StreamWriter(fs);
+                    writer.Write(file);
 
-                writer.Close();
+                    writer.Close();
 
-                MessageBox.Show("File Saved Successfully!");
+                    MessageBox.Show("File Saved Successfully!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Could not save the file!");
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.ToString());
+                }
             }
             else if (result == DialogResult.Cancel)
             {
-                MessageBox.Show("Operation was canceled");
+                MessageBox.Show("Operation was canceled!");
             }
         }
-
     }
 }

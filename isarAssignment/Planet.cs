@@ -42,13 +42,5 @@ namespace isarAssignment
         }
 
         public Planet() {}
-
-        public void listPlanet (Planet[] planet)
-        {
-            foreach(Planet item in planet)
-            {
-                Console.Write(item.Name);
-            }
-        }
     }
 }
